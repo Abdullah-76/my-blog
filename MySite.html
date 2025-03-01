@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Search...">
+        <button onclick="performSearch()">🔍</button>
+    </div>    
+    </div>
+    <title>My Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            background: #444;
+            padding: 10px;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+        }
+        nav ul li {
+            position: relative;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            display: block;
+        }
+        nav ul li ul {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #555;
+            padding: 0;
+        }
+        nav ul li:hover ul {
+            display: block;
+        }
+        nav ul li ul li {
+            width: 200px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+            padding: 20px;
+            background: white;
+        }
+        .sidebar {
+            float: right;
+            width: 30%;
+            padding: 20px;
+            background: #f9f9f9;
+            margin-top: 20px;
+        }
+        .content {
+            float: left;
+            width: 65%;
+            margin-top: 20px;
+        }
+        .search-bar {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    background: white;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    padding: 8px;
+    font-size: 16px;
+    width: 150px;
+}
+
+.search-bar button {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.search-bar button:hover {
+    background: #555;
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+    .search-bar input {
+        width: 120px;
+    }
+}
+        .footer {
+            clear: both;
+            text-align: center;
+            padding: 10px;
+            background: #333;
+            color: white;
+            margin-top: 20px;
+        }
+        .category-widget {
+            background: #fff;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .category-widget h3 {
+            background: #444;
+            color: white;
+            padding: 10px;
+            margin: -15px -15px 10px -15px;
+            border-radius: 5px 5px 0 0;
+        }
+        .category-widget ul {
+            list-style: none;
+            padding: 0;
+        }
+        .category-widget ul li {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        .category-widget ul li:last-child {
+            border-bottom: none;
+        }
+        .category-widget ul li a {
+            text-decoration: none;
+            color: #333;
+            display: block;
+            transition: 0.3s;
+        }
+        .category-widget ul li a:hover {
+            color: #007bff;
+        }
+        /* Responsive Layout */
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                width: 100%;
+                text-align: center;
+            }
+            nav ul li {
+                width: 100%;
+            }
+            .container {
+                width: 95%;
+            }
+            .content, .sidebar {
+                width: 100%;
+                float: none;
+                margin-top: 0;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Mobile menu toggle
+            const menuToggle = document.querySelector(".menu-toggle");
+            const navMenu = document.querySelector("nav ul");
+    
+            if (menuToggle) {
+                menuToggle.addEventListener("click", function () {
+                    navMenu.classList.toggle("active");
+                    if (navMenu.style.display === "flex") {
+                        navMenu.style.display = "none";
+                    } else {
+                        navMenu.style.display = "flex";
+                    }
+                });
+            }
+    
+            // Dropdown Menu Functionality
+            const dropdowns = document.querySelectorAll("nav ul li");
+    
+            dropdowns.forEach((dropdown) => {
+                dropdown.addEventListener("mouseover", function () {
+                    let submenu = this.querySelector("ul");
+                    if (submenu) submenu.style.display = "block";
+                });
+    
+                dropdown.addEventListener("mouseleave", function () {
+                    let submenu = this.querySelector("ul");
+                    if (submenu) submenu.style.display = "none";
+                });
+            });
+    
+            // Smooth Scroll for Internal Links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute("href").substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 50,
+                            behavior: "smooth"
+                        });
+                    }
+                });
+            });
+    
+            // Category Widget Interaction
+            const categoryLinks = document.querySelectorAll(".category-widget ul li a");
+            categoryLinks.forEach(link => {
+                link.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    alert("Category Clicked: " + this.innerText);
+                });
+            });
+    
+            // Lazy Load Images
+            const images = document.querySelectorAll("img[data-src]");
+    
+            const lazyLoad = () => {
+                images.forEach(img => {
+                    if (img.getBoundingClientRect().top < window.innerHeight) {
+                        img.src = img.dataset.src;
+                        img.removeAttribute("data-src");
+                    }
+                });
+            };
+    
+            window.addEventListener("scroll", lazyLoad);
+            window.addEventListener("load", lazyLoad);
+        });
+        function performSearch() {
+    let query = document.getElementById("search-input").value;
+    if (query) {
+        alert("Searching for: " + query);
+        // Redirect to search page (Modify the URL as needed)
+        // window.location.href = "search.html?q=" + encodeURIComponent(query);
+    } else {
+        alert("Please enter a search term.");
+    }
+}
+    </script>
+</head>
+<body>
+    <header>
+        <h1>My Blog</h1>
+        <p>Your daily source of knowledge</p>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Hair Care Products</a>
+                <ul>
+                    <li><a href="#">Hair Gel</a></li>
+                    <li><a href="#">Hair Serum</a></li>
+                    <li><a href="#">Hair Spray</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Shampoo</a>
+                <ul>
+                    <li><a href="#">Men's Shampoo</a></li>
+                    <li><a href="#">Women's Shampoo</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Others</a>
+                <ul>
+                    <li><a href="#">Face Wash</a></li>
+                    <li><a href="#">Perfume</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="content">
+            <h2>Featured Post</h2>
+            <p>Discover our latest and greatest articles here!</p>
+            <h3>Recent Posts</h3>
+            <ul>
+                <li><a href="#">Post 1</a></li>
+                <li><a href="#">Post 2</a></li>
+                <li><a href="#">Post 3</a></li>
+            </ul>
+        </div>
+        <div class="sidebar">
+            <div class="category-widget">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="#">Hair Care</a></li>
+                    <li><a href="#">Skin Care</a></li>
+                    <li><a href="#">Lifestyle</a></li>
+                    <li><a href="#">Health</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <p>&copy; 2025 My Blog | All Rights Reserved</p>
+        <p>Follow us on <a href="#">Facebook</a> | <a href="#">Twitter</a> | <a href="#">Instagram</a></p>
+    </div>
+</body>
+</html>
+
